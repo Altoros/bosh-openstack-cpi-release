@@ -1,4 +1,5 @@
-export app_root="$(dirname "$(dirname "$(readlink "$0")")")"
+cd "$(dirname "$0")/.."
+export app_root=`pwd`
 export base_folder=$app_root/tmp
 export source_folder=$base_folder/src
 export build_folder=$base_folder/build
@@ -34,11 +35,19 @@ function update_package_configs {
 function update_config_files {
   local package_to_update_name=$1
   local config_guess_path=`find $package_to_update_name -name config.guess`
-  [ -z "$config_guess_path" ] && cp $assets_folder/config.guess $config_guess_path
+  [ -f "$config_guess_path" ] && cp $assets_folder/config.guess $config_guess_path
   local config_sub_path=`find $package_to_update_name -name config.sub`
-  [ -z "$config_sub_path" ] && cp $assets_folder/config.sub $config_sub_path
+  [ -f "$config_sub_path" ] && cp $assets_folder/config.sub $config_sub_path
 }
 
+function patch_package {
+  local package_name=$1
+  local package_version=$2  
+  set_environment_variables $package_name $package_version
+  unarchive_package
+  go_to_build_folder
+  patch -p1 < $assets_folder/$package_name-$package_version.patch
+}
 
 function set_environment_variables {
   local package_name=$1
