@@ -1,8 +1,21 @@
 set -e
 
+# curl "http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD" > config.guess
+# curl "http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD" > config.sub
+# wget -O yaml-0.1.5.tar.gz https://bosh-openstack-cpi-blobs.s3.amazonaws.com/6ea9080c-2ec1-4f5c-98d1-d3d5db8f1bf8
+
+function update_config_files {
+  local package_to_update_name=$1
+  local config_guess_path=`find $package_to_update_name -name config.guess`
+  [ -z "$config_guess_path" ] && cp ruby_openstack_cpi/config.guess $config_guess_path
+  local config_sub_path=`find $package_to_update_name -name config.sub`
+  [ -z "$config_sub_path" ] && cp ruby_openstack_cpi/config.sub $config_sub_path
+}
+
 tar xzf ruby_openstack_cpi/yaml-0.1.5.tar.gz
 (
   set -e
+  update_config_files yaml-0.1.5
   cd yaml-0.1.5
   CFLAGS='-fPIC' ./configure --prefix=${BOSH_INSTALL_TARGET} --disable-shared
   make -j
@@ -12,6 +25,7 @@ tar xzf ruby_openstack_cpi/yaml-0.1.5.tar.gz
 tar xzf ruby_openstack_cpi/ruby-1.9.3-p545.tar.gz
 (
   set -e
+  update_config_files ruby-1.9.3-p545
   cd ruby-1.9.3-p545
   LDFLAGS="-Wl,-rpath -Wl,${BOSH_INSTALL_TARGET}" CFLAGS='-fPIC' ./configure --prefix=${BOSH_INSTALL_TARGET} --disable-install-doc --with-opt-dir=${BOSH_INSTALL_TARGET}
   make -j
