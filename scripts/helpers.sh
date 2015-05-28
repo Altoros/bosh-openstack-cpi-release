@@ -57,7 +57,7 @@ function set_environment_variables {
 }
 
 function unarchive_package {
-  if [ -f ! $build_folder/$full_package_name ]
+  if [ ! -f "$build_folder/$full_package_name" ]
     tar -xzvf $source_folder/$full_package_name.tar.gz -C $build_folder
   fi
 }
