@@ -1,17 +1,7 @@
 # #!/bin/bash
 
-# set -ex
+set -ex
 
-# cpi_name="openstack"
-# cpi_dir=$(cd $(dirname $0)/../ && pwd)
-# cpi_gems_dir=${cpi_dir}/src/bosh_${cpi_name}_cpi
-
-# cleanup() {
-#   cd $cpi_gems_dir
-#   rm Gemfile*
-# }
-
-# trap cleanup EXIT
 
 . ./helpers.sh
 
@@ -30,36 +20,26 @@ cp $blobs_folder/libxslt-1.1.28.tar.gz .
 gem install bundler
 bundle install
 rake gem
+gem install --local pkg/nokogiri-1.6.6.2.gem
 
+cpi_name="openstack"
+cpi_dir=$app_root
+cpi_gems_dir=${cpi_dir}/src/bosh_${cpi_name}_cpi
 
-# set_environment_variables nokogiri '1.6.6.2'
-# unarchive_package
-# go_to_build_folder
-# patch -p1 < $assets_folder/nokogiri-1.6.6.2.patch
-# gem install bundler
-# bundle install
-# rake gem # or rake gem:package
-# # cp pkg/$full_package_name.gem $build_package/dea_next_gems/vendor/cache
+cleanup() {
+  cd $cpi_gems_dir
+  rm Gemfile*
+}
 
-# # eventmachine-0.12.10
-# set_environment_variables eventmachine '1.0.7'
-# unarchive_package
-# go_to_build_folder
-# patch -p1 < $assets_folder/dea_next_gems/eventmachine-1.0.7.patch
-# gem build eventmachine.gemspec
-# # cp $full_package_name.gem $build_package/dea_next_gems/vendor/cache
+trap cleanup EXIT
 
+(
+  cd $cpi_gems_dir
+  cat > 'Gemfile' <<EOF
+source "https://rubygems.org"
 
+gem "bosh_${cpi_name}_cpi"
+EOF
 
-
-
-# (
-#   cd $cpi_gems_dir
-#   cat > 'Gemfile' <<EOF
-# source "https://rubygems.org"
-
-# gem "bosh_${cpi_name}_cpi"
-# EOF
-
-#   bundle package
-# )
+  bundle package
+)
