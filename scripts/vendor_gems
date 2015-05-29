@@ -2,23 +2,21 @@
 
 set -ex
 
-
 . ./helpers.sh
 
 download_sources nokogiri 1.6.6.2 https://github.com/sparklemotion/nokogiri/archive/v1.6.6.2.tar.gz
-download_sources libxml2 2.9.2 ftp://ftp.xmlsoft.org/libxml2/libxml2-2.9.2.tar.gz
 download_sources libxslt 1.1.28 ftp://ftp.xmlsoft.org/libxml2/libxslt-1.1.28.tar.gz
-download_sources eventmachine 1.0.7 https://github.com/eventmachine/eventmachine/archive/v1.0.7.tar.gz
 
-update_package_configs libxml2 2.9.2
 update_package_configs libxslt 1.1.28
 
-patch_package nokogiri '1.6.6.2'
+set_environment_variables nokogiri 1.6.6.2
+unarchive_package
 go_to_build_folder
-cp $blobs_folder/libxml2-2.9.2.tar.gz .
-cp $blobs_folder/libxslt-1.1.28.tar.gz .
+mkdir ./ports/archives
+cp $blobs_folder/libxslt-1.1.28.tar.gz ./ports/archives
 gem install bundler
 bundle install
+rake
 rake gem
 gem install --local pkg/nokogiri-1.6.6.2.gem
 
