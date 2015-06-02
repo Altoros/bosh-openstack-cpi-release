@@ -5,7 +5,7 @@ cpi_name="openstack"
 cpi_dir=$(cd $(dirname $0)/../ && pwd)
 cpi_gems_dir=${cpi_dir}/src/bosh_${cpi_name}_cpi
 
-gem install --local ${cpi_dir}/scripts/assets/nokogiri-1.6.6.2.gem
+# gem install --local ${cpi_dir}/scripts/assets/nokogiri-1.6.6.2.gem
 
 cleanup() {
   cd $cpi_gems_dir
@@ -19,6 +19,7 @@ trap cleanup EXIT
   cat > 'Gemfile' <<EOF
 source "https://rubygems.org"
 
+gem 'fog-aws', '~> 0.1.1'
 gem "bosh_${cpi_name}_cpi"
 EOF
 
