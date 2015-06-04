@@ -15,19 +15,10 @@ cat >> Gemfile <<EOF
 gem 'bosh_openstack_cpi'
 EOF
 
-echo $PWD
-echo $BOSH_PACKAGES_DIR
-echo $BOSH_INSTALL_TARGET
-ls -la vendor/cache 
-ls -la 
-echo "ENV!!!!!"
-env 
-
 # force bundler to use a clean config
 export BUNDLE_CONFIG=`pwd`/.cpi_bundle_config
 
-# bundle_cmd="$BOSH_PACKAGES_DIR/ruby_openstack_cpi/bin/bundle"
-bundle_cmd=bundle
+bundle_cmd="$BOSH_PACKAGES_DIR/ruby_openstack_cpi/bin/bundle"
 
 $bundle_cmd install \
   --local           \
