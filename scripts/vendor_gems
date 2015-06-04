@@ -1,6 +1,12 @@
 # #!/bin/bash
 set -ex
 
+if [[ "`bundle --version`" != *"1.8.2"* ]]; then
+  echo "You should use bundler with version 1.8.2"
+  exit 2
+fi
+
+
 cpi_name="openstack"
 cpi_dir=$(cd $(dirname $0)/../ && pwd)
 cpi_gems_dir=${cpi_dir}/src/bosh_${cpi_name}_cpi
@@ -17,8 +23,6 @@ trap cleanup EXIT
 (
   cd $cpi_gems_dir
   cat > 'Gemfile' <<EOF
-source "https://rubygems.org"
-
 gem "bosh_${cpi_name}_cpi"
 EOF
 
